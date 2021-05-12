@@ -7,10 +7,10 @@ const authenticateCredentials = (password, hash) => {
   return bcrypt.compareSync(password, hash)
 }
 
-const authenticateToken = authHeader => {
+const authenticateToken = async authHeader => {
   const token = authHeader && authHeader.split(' ')[1]
 
-  if (token) return jwt.verify(token, process.env.TOKEN_SECRET, () => {})
+  if (token) return await jwt.verify(token, process.env.TOKEN_SECRET, () => {})
   return false
 }
 
