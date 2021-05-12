@@ -3,7 +3,11 @@ const router = express.Router()
 
 const User = require('../model/user')
 
-const { authenticateCredentials, generateAccessToken } = require('../auth')
+const {
+  authenticateCredentials,
+  generateAccessToken,
+  authenticateToken
+} = require('../auth')
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body
@@ -13,12 +17,29 @@ router.post('/login', async (req, res) => {
   }
 
   const user = await User.findOne({ email }).exec()
-  if (!user || authenticateCredentials(password, user.password)) {
-    const jwt = generateAccessToken(user)
-    return res.status(200).json(jwt)
+
+  if (user) {
+    if (authenticateCredentials(password, user.password)) {
+      const jwt = generateAccessToken(user)
+      return res.status(200).json(jwt)
+    }
   }
 
-  return res.status(401).json({ error: 'Unauthorized' })
+  res.status(401).json({ error: 'Unauthorized' })
+})
+
+router.use((req, res, next) => {
+  const token = req.headers.authorization
+  if (!authenticateToken(token)) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+  next()
+})
+
+router.post('/logout', (req, res, next) => {
+  console.log('Logout')
+  res.json({ message: 'Logout' })
+  next()
 })
 
 module.exports = router
