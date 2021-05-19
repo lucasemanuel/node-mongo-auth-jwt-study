@@ -4,11 +4,15 @@ const routes = require('./src/routes')
 
 require('dotenv').config()
 
-const { DB_HOST, DB_PORT, DB_DATABASE } = process.env
-mongoose.connect(`mongodb://${DB_HOST}:${DB_PORT}/${DB_DATABASE}`, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+const { DB_HOST, DB_PORT, DB_USERNAME, DB_PASSWORD } = process.env
+
+mongoose.connect(
+  `mongodb://${DB_USERNAME}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}`,
+  {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  }
+)
 mongoose.set('useCreateIndex', true)
 mongoose.connection.on('error', error => console.log(error))
 mongoose.Promise = global.Promise
