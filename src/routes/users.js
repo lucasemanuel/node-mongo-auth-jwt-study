@@ -3,7 +3,10 @@ const User = require('../model/user')
 
 const router = express.Router()
 
-router.get('/', (req, res) => {})
+router.get('/', async (req, res) => {
+  const users = await User.find({}).exec()
+  res.json(users)
+})
 
 router.post('/', (req, res) => {
   const { email, password } = req.body
